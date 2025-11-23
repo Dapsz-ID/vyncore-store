@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pricing - Vyncore Store</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --neon-blue: #00d4ff;
+            --neon-purple: #9d00ff;
+            --dark-bg: #0a0a0f;
+            --card-bg: #121218;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--dark-bg);
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+        
+        .gradient-text {
+            background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .neon-border {
+            border: 1px solid transparent;
+            background: linear-gradient(var(--dark-bg), var(--dark-bg)) padding-box,
+                        linear-gradient(90deg, var(--neon-blue), var(--neon-purple)) border-box;
+        }
+        
+        .neon-button {
+            background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple));
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .neon-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 212, 255, 0.3);
+        }
+        
+        .neon-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.2);
+            transition: left 0.5s;
+        }
+        
+        .neon-button:hover::before {
+            left: 100%;
+        }
+        
+        .pricing-card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 30px;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .pricing-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--neon-blue);
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.2);
+        }
+        
+        .pricing-card.featured {
+            border-color: var(--neon-purple);
+            box-shadow: 0 0 20px rgba(157, 0, 255, 0.3);
+        }
+        
+        .pricing-card.featured::before {
+            content: 'MOST POPULAR';
+            position: absolute;
+            top: 15px;
+            right: -30px;
+            background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple));
+            color: white;
+            padding: 5px 40px;
+            font-size: 12px;
+            font-weight: bold;
+            transform: rotate(45deg);
+        }
+        
+        .pricing-feature {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        
+        .pricing-feature i {
+            color: var(--neon-blue);
+            margin-right: 10px;
+        }
+        
+        .floating-whatsapp {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background-color: #25D366;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+        
+        .floating-whatsapp:hover {
+            transform: scale(1.1);
+        }
+        
+        .hamburger {
+            display: none;
+            cursor: pointer;
+        }
+        
+        .hamburger span {
+            display: block;
+            width: 25px;
+            height: 3px;
+            margin: 5px 0;
+            background-color: white;
+            transition: all 0.3s ease;
+        }
+        
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+        
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+        
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -6px);
+        }
+        
+        @media (max-width: 768px) {
+            .hamburger {
+                display: block;
+            }
+            
+            .nav-menu {
+                position: fixed;
+                left: -100%;
+                top: 70px;
+                flex-direction: column;
+                background-color: rgba(10, 10, 15, 0.95);
+                width: 100%;
+                text-align: center;
+                transition: 0.3s;
+                box-shadow: 0 10px 27px rgba(0, 0, 0, 0.05);
+                padding: 20px 0;
+                z-index: 100;
+            }
+            
+            .nav-menu.active {
+                left: 0;
+            }
+            
+            .nav-menu li {
+                margin: 15px 0;
+            }
+        }
+        
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+        
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating WhatsApp Button -->
+    <a href="https://wa.me/6282197991725" target="_blank" class="floating-whatsapp">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+
+    <!-- Header -->
+    <header class="fixed w-full py-4 px-6 z-50 bg-black bg-opacity-80 backdrop-blur-sm">
+        <div class="container mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <img src="https://z-cdn-media.chatglm.cn/files/0fc747a7-fe28-466d-b18a-4e61b47d372c_ChatGPT%20Image%2022%20Nov%202025,%2022.40.21.png?auth_key=1863869110-701803fa97704936a803a6981cd856ab-0-8781c5035987669865a5de21519dbff6" alt="Vyncore Store Logo" class="h-10">
+                <span class="text-xl font-bold">Vyncore Store</span>
+            </div>
+            
+            <div class="flex items-center space-x-6">
+                <nav>
+                    <ul class="nav-menu flex space-x-8">
+                        <li><a href="index.html" class="hover:text-cyan-400 transition">Home</a></li>
+                        <li><a href="products.html" class="hover:text-cyan-400 transition">Products</a></li>
+                        <li><a href="pricing.html" class="hover:text-cyan-400 transition">Pricing</a></li>
+                        <li><a href="about.html" class="hover:text-cyan-400 transition">About Us</a></li>
+                        <li><a href="contact.html" class="hover:text-cyan-400 transition">Contact</a></li>
+                    </ul>
+                </nav>
+                <a href="login.html" class="neon-button text-white font-semibold py-2 px-6 rounded-full login-button">
+                    Login
+                </a>
+                <div class="hamburger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Page Header -->
+    <section class="pt-32 pb-16 px-6">
+        <div class="container mx-auto text-center">
+            <h1 class="text-4xl md:text-5xl font-bold mb-4 fade-in">Our <span class="gradient-text">Pricing</span></h1>
+            <p class="text-xl text-gray-300 max-w-2xl mx-auto fade-in">
+                Choose the perfect plan for your needs. All plans include 24/7 support.
+            </p>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section class="py-10 px-6">
+        <div class="container mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Basic Plan -->
+                <div class="pricing-card fade-in">
+                    <h3 class="text-2xl font-bold mb-2">Basic</h3>
+                    <div class="text-4xl font-bold mb-6"><span class="gradient-text">$5.99</span>/mo</div>
+                    
+                    <div class="mb-8 flex-grow">
+                        <div class="pricing-feature">
+                            <i class="fas fa-memory"></i>
+                            <span>2 GB RAM</span>
+                        </div>
+                        <div class="pricing-feature">
+                            <i class="fas fa-microchip"></i>
+                            <span>2 vCPU Cores</span>
+                        </div>
+                        <div class="pricing-feature">
+                            <i class="fas fa-hdd"></i>
+                            <span>20 GB NVMe Storage</span>
+                        </div>
+                        <div class="pricing-feature">
+                            <i class="fas fa-globe"></i>
+                            <span>1 Location</span>
+                        </div>
+                        <div class="pricing-feature">
+                            <i class="fas fa-headset"></i>
+                            <span>Basic Support</span>
+                        </div>
+                    </div>
+                    
+                    <a href="contact.html" class="neon-button text-white font-semibold py-3 px-6 rounded-full w-full text-center">
+                        Get Started
+                    </a>
+                </div>
+                
+                <!-- Standard Plan -->
+                <div class="pricing-card featured fade-in">
+                    <h3 class="text-2xl font-bold mb-2">Standard</h3>
+                    <div class="text-4xl font-bold mb-6"><span class="gradient-text">$12.99</span>/mo</div>
+                    
+                    <div class="mb-8 flex-grow">
+                        <div class="pricing-feature">
+                            <i class="fas fa-memory"></i>
+                            <span>4 GB RAM</span>
+                        </div>
+                        <div class="pricing-feature">
+                            <i class="fas fa-microchip"></i>
+                            <span>4 vCPU Cores</span>
+                        </div>
+                        <div class="pricing-feature">
+                            <i class="fas fa-hdd"></i>
+                            <span>50 GB NVMe Storage</span>
+                        </div>
+                        <div class="pricing-feature">
+                            <i class="fas fa-globe"></i>
+                            <span>3 Locations</span>
+                        </div>
+                        <div class="pricing-feature">
+                            <i class="fas fa-headset"></i>
+                            <span>Priority Support</span>
+                        </div>
+                        <div class="pricing-feature">
+                            <i class="fas fa-shield-alt"></i>
+                            <span>DDoS Protection</span>
+                        </div>
+                    </div>
+                    
+                    <a href="contact.html" class="neon-button text-white font-semibold py-3 px-6 rounded-full w-full text-center">
+                        Get Started
+                    </a>
+                </div>
+                
+                <!-- Premium Plan -->
+                <div class="pricing-card fade-in">
+                    <h3 class="text-2xl font-bold mb-2">Premium</h3>
+                    <div class="text-4xl font-bold mb-6"><span class="gradient-text">$24.99</span>/mo</div>
+                    
+                    <div class="mb-8 flex-grow">
+                        <div class="pricing-feature">
+                            <i class="fas fa-memory"></i>
+                            <span>8 GB RAM</span>
+                        </div>
+                        <div class="pricing-feature">
+                            <i class="fas fa-microchip"></i>
+                            <span>6 vCPU Cores</span>
+                        </div>
+                        <div class="pricing-feature">
+                            <i class="fas fa-hdd"></i>
+                            <span>100 GB NVMe Storage</span>
+                        </div>
+                        <div class="pricing-feature">
+                            <i class="fas fa-globe"></i>
+                            <span>5+ Locations</span>
+                        </div>
+                        <div class="pricing-feature">
+                            <i class="fas fa-headset"></i>
+                            <span>24/7 Premium Support</span>
+                        </div>
+                        <div class="pricing-feature">
+                            <i class="fas fa-shield-alt"></i>
+                            <span>Advanced DDoS Protection</span>
+                        </div>
+                        <div class="pricing-feature">
+                            <i class="fas fa-certificate"></i>
+                            <span>Free SSL Certificate</span>
+                        </div>
+                    </div>
+                    
+                    <a href="contact.html" class="neon-button text-white font-semibold py-3 px-6 rounded-full w-full text-center">
+                        Get Started
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="py-20 px-6">
+        <div class="container mx-auto">
+            <h2 class="text-3xl md:text-4xl font-bold text-center mb-16 fade-in">Frequently Asked Questions</h2>
+            
+            <div class="max-w-3xl mx-auto">
+                <div class="mb-8 fade-in">
+                    <h3 class="text-xl font-semibold mb-2">What payment methods do you accept?</h3>
+                    <p class="text-gray-400">We accept all major credit cards, PayPal, and cryptocurrency payments.</p>
+                </div>
+                
+                <div class="mb-8 fade-in">
+                    <h3 class="text-xl font-semibold mb-2">Can I upgrade or downgrade my plan?</h3>
+                    <p class="text-gray-400">Yes, you can upgrade or downgrade your plan at any time from your client area.</p>
+                </div>
+                
+                <div class="mb-8 fade-in">
+                    <h3 class="text-xl font-semibold mb-2">Do you offer refunds?</h3>
+                    <p class="text-gray-400">We offer a 7-day money-back guarantee for all new hosting plans.</p>
+                </div>
+                
+                <div class="mb-8 fade-in">
+                    <h3 class="text-xl font-semibold mb-2">Is there a setup fee?</h3>
+                    <p class="text-gray-400">No, there are no setup fees for any of our hosting plans.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-12 px-6 bg-black">
+        <div class="container mx-auto">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-6 md:mb-0">
+                    <div class="flex items-center space-x-2 mb-4">
+                        <img src="https://z-cdn-media.chatglm.cn/files/0fc747a7-fe28-466d-b18a-4e61b47d372c_ChatGPT%20Image%2022%20Nov%202025,%2022.40.21.png?auth_key=1863869110-701803fa97704936a803a6981cd856ab-0-8781c5035987669865a5de21519dbff6" alt="Vyncore Store Logo" class="h-10">
+                        <span class="text-xl font-bold">Vyncore Store</span>
+                    </div>
+                    <p class="text-gray-400">Powerful Cloud & Game Hosting Solutions</p>
+                </div>
+                
+                <div class="flex space-x-6">
+                    <a href="#" class="text-gray-400 hover:text-cyan-400 transition">
+                        <i class="fab fa-twitter text-xl"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-cyan-400 transition">
+                        <i class="fab fa-facebook text-xl"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-cyan-400 transition">
+                        <i class="fab fa-instagram text-xl"></i>
+                    </a>
+                    <a href="https://github.com/Dapsz-ID" target="_blank" class="text-gray-400 hover:text-cyan-400 transition">
+                        <i class="fab fa-github text-xl"></i>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-500">
+                <p>&copy; 2025 Vyncore Store. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="auth.js"></script>
+    <script>
+        // Hamburger menu toggle
+        const hamburger = document.querySelector('.hamburger');
+        const navMenu = document.querySelector('.nav-menu');
+        
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('active');
+            navMenu.classList.toggle('active');
+        });
+        
+        // Close menu when clicking on a link
+        document.querySelectorAll('.nav-menu a').forEach(link => {
+            link.addEventListener('click', () => {
+                hamburger.classList.remove('active');
+                navMenu.classList.remove('active');
+            });
+        });
+        
+        // Fade in animation on scroll
+        const fadeElements = document.querySelectorAll('.fade-in');
+        
+        const fadeInOnScroll = () => {
+            fadeElements.forEach(element => {
+                const elementTop = element.getBoundingClientRect().top;
+                const elementVisible = 150;
+                
+                if (elementTop < window.innerHeight - elementVisible) {
+                    element.classList.add('visible');
+                }
+            });
+        };
+        
+        window.addEventListener('scroll', fadeInOnScroll);
+        fadeInOnScroll(); // Check on page load
+    </script>
+</body>
+  </html>
