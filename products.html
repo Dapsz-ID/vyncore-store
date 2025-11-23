@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products - Vyncore Store</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --neon-blue: #00d4ff;
+            --neon-purple: #9d00ff;
+            --dark-bg: #0a0a0f;
+            --card-bg: #121218;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--dark-bg);
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+        
+        .gradient-text {
+            background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .neon-border {
+            border: 1px solid transparent;
+            background: linear-gradient(var(--dark-bg), var(--dark-bg)) padding-box,
+                        linear-gradient(90deg, var(--neon-blue), var(--neon-purple)) border-box;
+        }
+        
+        .neon-button {
+            background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple));
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .neon-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 212, 255, 0.3);
+        }
+        
+        .neon-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.2);
+            transition: left 0.5s;
+        }
+        
+        .neon-button:hover::before {
+            left: 100%;
+        }
+        
+        .product-card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 24px;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--neon-blue);
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.2);
+        }
+        
+        .floating-whatsapp {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background-color: #25D366;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+        
+        .floating-whatsapp:hover {
+            transform: scale(1.1);
+        }
+        
+        .hamburger {
+            display: none;
+            cursor: pointer;
+        }
+        
+        .hamburger span {
+            display: block;
+            width: 25px;
+            height: 3px;
+            margin: 5px 0;
+            background-color: white;
+            transition: all 0.3s ease;
+        }
+        
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+        
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+        
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -6px);
+        }
+        
+        @media (max-width: 768px) {
+            .hamburger {
+                display: block;
+            }
+            
+            .nav-menu {
+                position: fixed;
+                left: -100%;
+                top: 70px;
+                flex-direction: column;
+                background-color: rgba(10, 10, 15, 0.95);
+                width: 100%;
+                text-align: center;
+                transition: 0.3s;
+                box-shadow: 0 10px 27px rgba(0, 0, 0, 0.05);
+                padding: 20px 0;
+                z-index: 100;
+            }
+            
+            .nav-menu.active {
+                left: 0;
+            }
+            
+            .nav-menu li {
+                margin: 15px 0;
+            }
+        }
+        
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+        
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating WhatsApp Button -->
+    <a href="https://wa.me/6282197991725" target="_blank" class="floating-whatsapp">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+
+    <!-- Header -->
+    <header class="fixed w-full py-4 px-6 z-50 bg-black bg-opacity-80 backdrop-blur-sm">
+        <div class="container mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <img src="https://z-cdn-media.chatglm.cn/files/0fc747a7-fe28-466d-b18a-4e61b47d372c_ChatGPT%20Image%2022%20Nov%202025,%2022.40.21.png?auth_key=1863869110-701803fa97704936a803a6981cd856ab-0-8781c5035987669865a5de21519dbff6" alt="Vyncore Store Logo" class="h-10">
+                <span class="text-xl font-bold">Vyncore Store</span>
+            </div>
+            
+            <div class="flex items-center space-x-6">
+                <nav>
+                    <ul class="nav-menu flex space-x-8">
+                        <li><a href="index.html" class="hover:text-cyan-400 transition">Home</a></li>
+                        <li><a href="products.html" class="hover:text-cyan-400 transition">Products</a></li>
+                        <li><a href="pricing.html" class="hover:text-cyan-400 transition">Pricing</a></li>
+                        <li><a href="about.html" class="hover:text-cyan-400 transition">About Us</a></li>
+                        <li><a href="contact.html" class="hover:text-cyan-400 transition">Contact</a></li>
+                    </ul>
+                </nav>
+                <a href="login.html" class="neon-button text-white font-semibold py-2 px-6 rounded-full login-button">
+                    Login
+                </a>
+                <div class="hamburger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Page Header -->
+    <section class="pt-32 pb-16 px-6">
+        <div class="container mx-auto text-center">
+            <h1 class="text-4xl md:text-5xl font-bold mb-4 fade-in">Our <span class="gradient-text">Products</span></h1>
+            <p class="text-xl text-gray-300 max-w-2xl mx-auto fade-in">
+                Explore our range of hosting solutions designed to meet your needs.
+            </p>
+        </div>
+    </section>
+
+    <!-- Products Section -->
+    <section class="py-10 px-6">
+        <div class="container mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Panel Pterodactyl -->
+                <div class="product-card fade-in">
+                    <div class="text-cyan-400 text-4xl mb-4">
+                        <i class="fas fa-gamepad"></i>
+                    </div>
+                    <h3 class="text-2xl font-semibold mb-2">Panel Pterodactyl</h3>
+                    <p class="text-gray-400 mb-4 flex-grow">
+                        Complete game server management with our intuitive Pterodactyl panel. Perfect for hosting Minecraft, Rust, and other popular games.
+                    </p>
+                    <div class="text-2xl font-bold mb-4">Starting at <span class="gradient-text">$5.99/mo</span></div>
+                    <a href="pricing.html" class="neon-button text-white font-semibold py-3 px-6 rounded-full w-full text-center">
+                        Order Now
+                    </a>
+                </div>
+                
+                <!-- Admin Panel -->
+                <div class="product-card fade-in">
+                    <div class="text-purple-500 text-4xl mb-4">
+                        <i class="fas fa-user-cog"></i>
+                    </div>
+                    <h3 class="text-2xl font-semibold mb-2">Admin Panel</h3>
+                    <p class="text-gray-400 mb-4 flex-grow">
+                        Powerful admin panel for managing your hosting services, users, and billing all in one place.
+                    </p>
+                    <div class="text-2xl font-bold mb-4">Starting at <span class="gradient-text">$9.99/mo</span></div>
+                    <a href="pricing.html" class="neon-button text-white font-semibold py-3 px-6 rounded-full w-full text-center">
+                        Order Now
+                    </a>
+                </div>
+                
+                <!-- VPS / Cloud Hosting -->
+                <div class="product-card fade-in">
+                    <div class="text-cyan-400 text-4xl mb-4">
+                        <i class="fas fa-cloud"></i>
+                    </div>
+                    <h3 class="text-2xl font-semibold mb-2">VPS / Cloud Hosting</h3>
+                    <p class="text-gray-400 mb-4 flex-grow">
+                        High-performance virtual private servers with SSD storage and dedicated resources for your applications.
+                    </p>
+                    <div class="text-2xl font-bold mb-4">Starting at <span class="gradient-text">$12.99/mo</span></div>
+                    <a href="pricing.html" class="neon-button text-white font-semibold py-3 px-6 rounded-full w-full text-center">
+                        Order Now
+                    </a>
+                </div>
+                
+                <!-- Bot Hosting -->
+                <div class="product-card fade-in">
+                    <div class="text-purple-500 text-4xl mb-4">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <h3 class="text-2xl font-semibold mb-2">Bot Hosting</h3>
+                    <p class="text-gray-400 mb-4 flex-grow">
+                        Reliable hosting for Discord bots, Telegram bots, and other automation tools with 24/7 uptime.
+                    </p>
+                    <div class="text-2xl font-bold mb-4">Starting at <span class="gradient-text">$3.99/mo</span></div>
+                    <a href="pricing.html" class="neon-button text-white font-semibold py-3 px-6 rounded-full w-full text-center">
+                        Order Now
+                    </a>
+                </div>
+                
+                <!-- Website Hosting -->
+                <div class="product-card fade-in">
+                    <div class="text-cyan-400 text-4xl mb-4">
+                        <i class="fas fa-globe"></i>
+                    </div>
+                    <h3 class="text-2xl font-semibold mb-2">Website Hosting</h3>
+                    <p class="text-gray-400 mb-4 flex-grow">
+                        Fast and secure shared hosting with cPanel, free SSL, and one-click WordPress installation.
+                    </p>
+                    <div class="text-2xl font-bold mb-4">Starting at <span class="gradient-text">$2.99/mo</span></div>
+                    <a href="pricing.html" class="neon-button text-white font-semibold py-3 px-6 rounded-full w-full text-center">
+                        Order Now
+                    </a>
+                </div>
+                
+                <!-- Dedicated Servers -->
+                <div class="product-card fade-in">
+                    <div class="text-purple-500 text-4xl mb-4">
+                        <i class="fas fa-server"></i>
+                    </div>
+                    <h3 class="text-2xl font-semibold mb-2">Dedicated Servers</h3>
+                    <p class="text-gray-400 mb-4 flex-grow">
+                        Full server resources dedicated to your needs with enterprise hardware and DDoS protection.
+                    </p>
+                    <div class="text-2xl font-bold mb-4">Starting at <span class="gradient-text">$89.99/mo</span></div>
+                    <a href="pricing.html" class="neon-button text-white font-semibold py-3 px-6 rounded-full w-full text-center">
+                        Order Now
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-20 px-6">
+        <div class="container mx-auto text-center">
+            <h2 class="text-3xl md:text-4xl font-bold mb-6 fade-in">Need a Custom Solution?</h2>
+            <p class="text-xl text-gray-300 mb-8 max-w-2xl mx-auto fade-in">
+                Contact us for a tailored hosting solution that meets your specific requirements.
+            </p>
+            <a href="contact.html" class="neon-button text-white font-semibold py-3 px-8 rounded-full fade-in">
+                Contact Us
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-12 px-6 bg-black">
+        <div class="container mx-auto">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-6 md:mb-0">
+                    <div class="flex items-center space-x-2 mb-4">
+                        <img src="https://z-cdn-media.chatglm.cn/files/0fc747a7-fe28-466d-b18a-4e61b47d372c_ChatGPT%20Image%2022%20Nov%202025,%2022.40.21.png?auth_key=1863869110-701803fa97704936a803a6981cd856ab-0-8781c5035987669865a5de21519dbff6" alt="Vyncore Store Logo" class="h-10">
+                        <span class="text-xl font-bold">Vyncore Store</span>
+                    </div>
+                    <p class="text-gray-400">Powerful Cloud & Game Hosting Solutions</p>
+                </div>
+                
+                <div class="flex space-x-6">
+                    <a href="#" class="text-gray-400 hover:text-cyan-400 transition">
+                        <i class="fab fa-twitter text-xl"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-cyan-400 transition">
+                        <i class="fab fa-facebook text-xl"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-cyan-400 transition">
+                        <i class="fab fa-instagram text-xl"></i>
+                    </a>
+                    <a href="https://github.com/Dapsz-ID" target="_blank" class="text-gray-400 hover:text-cyan-400 transition">
+                        <i class="fab fa-github text-xl"></i>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-500">
+                <p>&copy; 2025 Vyncore Store. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="auth.js"></script>
+    <script>
+        // Hamburger menu toggle
+        const hamburger = document.querySelector('.hamburger');
+        const navMenu = document.querySelector('.nav-menu');
+        
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('active');
+            navMenu.classList.toggle('active');
+        });
+        
+        // Close menu when clicking on a link
+        document.querySelectorAll('.nav-menu a').forEach(link => {
+            link.addEventListener('click', () => {
+                hamburger.classList.remove('active');
+                navMenu.classList.remove('active');
+            });
+        });
+        
+        // Fade in animation on scroll
+        const fadeElements = document.querySelectorAll('.fade-in');
+        
+        const fadeInOnScroll = () => {
+            fadeElements.forEach(element => {
+                const elementTop = element.getBoundingClientRect().top;
+                const elementVisible = 150;
+                
+                if (elementTop < window.innerHeight - elementVisible) {
+                    element.classList.add('visible');
+                }
+            });
+        };
+        
+        window.addEventListener('scroll', fadeInOnScroll);
+        fadeInOnScroll(); // Check on page load
+    </script>
+</body>
+      </html>
