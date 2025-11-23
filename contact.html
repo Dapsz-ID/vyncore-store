@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us - Vyncore Store</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --neon-blue: #00d4ff;
+            --neon-purple: #9d00ff;
+            --dark-bg: #0a0a0f;
+            --card-bg: #121218;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--dark-bg);
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+        
+        .gradient-text {
+            background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .neon-border {
+            border: 1px solid transparent;
+            background: linear-gradient(var(--dark-bg), var(--dark-bg)) padding-box,
+                        linear-gradient(90deg, var(--neon-blue), var(--neon-purple)) border-box;
+        }
+        
+        .neon-button {
+            background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple));
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .neon-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 212, 255, 0.3);
+        }
+        
+        .neon-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.2);
+            transition: left 0.5s;
+        }
+        
+        .neon-button:hover::before {
+            left: 100%;
+        }
+        
+        .contact-card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 30px;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .contact-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--neon-blue);
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.2);
+        }
+        
+        .form-input {
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 12px 16px;
+            color: white;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: var(--neon-blue);
+            box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.1);
+        }
+        
+        .form-textarea {
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 12px 16px;
+            color: white;
+            width: 100%;
+            min-height: 120px;
+            resize: vertical;
+            transition: all 0.3s ease;
+        }
+        
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--neon-blue);
+            box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.1);
+        }
+        
+        .contact-info {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .contact-info i {
+            font-size: 24px;
+            margin-right: 16px;
+            color: var(--neon-purple);
+            width: 30px;
+            text-align: center;
+        }
+        
+        .floating-whatsapp {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background-color: #25D366;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+        
+        .floating-whatsapp:hover {
+            transform: scale(1.1);
+        }
+        
+        .hamburger {
+            display: none;
+            cursor: pointer;
+        }
+        
+        .hamburger span {
+            display: block;
+            width: 25px;
+            height: 3px;
+            margin: 5px 0;
+            background-color: white;
+            transition: all 0.3s ease;
+        }
+        
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+        
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+        
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -6px);
+        }
+        
+        @media (max-width: 768px) {
+            .hamburger {
+                display: block;
+            }
+            
+            .nav-menu {
+                position: fixed;
+                left: -100%;
+                top: 70px;
+                flex-direction: column;
+                background-color: rgba(10, 10, 15, 0.95);
+                width: 100%;
+                text-align: center;
+                transition: 0.3s;
+                box-shadow: 0 10px 27px rgba(0, 0, 0, 0.05);
+                padding: 20px 0;
+                z-index: 100;
+            }
+            
+            .nav-menu.active {
+                left: 0;
+            }
+            
+            .nav-menu li {
+                margin: 15px 0;
+            }
+        }
+        
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+        
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating WhatsApp Button -->
+    <a href="https://wa.me/6282197991725" target="_blank" class="floating-whatsapp">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+
+    <!-- Header -->
+    <header class="fixed w-full py-4 px-6 z-50 bg-black bg-opacity-80 backdrop-blur-sm">
+        <div class="container mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <img src="https://z-cdn-media.chatglm.cn/files/0fc747a7-fe28-466d-b18a-4e61b47d372c_ChatGPT%20Image%2022%20Nov%202025,%2022.40.21.png?auth_key=1863869110-701803fa97704936a803a6981cd856ab-0-8781c5035987669865a5de21519dbff6" alt="Vyncore Store Logo" class="h-10">
+                <span class="text-xl font-bold">Vyncore Store</span>
+            </div>
+            
+            <div class="flex items-center space-x-6">
+                <nav>
+                    <ul class="nav-menu flex space-x-8">
+                        <li><a href="index.html" class="hover:text-cyan-400 transition">Home</a></li>
+                        <li><a href="products.html" class="hover:text-cyan-400 transition">Products</a></li>
+                        <li><a href="pricing.html" class="hover:text-cyan-400 transition">Pricing</a></li>
+                        <li><a href="about.html" class="hover:text-cyan-400 transition">About Us</a></li>
+                        <li><a href="contact.html" class="hover:text-cyan-400 transition">Contact</a></li>
+                    </ul>
+                </nav>
+                <a href="login.html" class="neon-button text-white font-semibold py-2 px-6 rounded-full login-button">
+                    Login
+                </a>
+                <div class="hamburger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Page Header -->
+    <section class="pt-32 pb-16 px-6">
+        <div class="container mx-auto text-center">
+            <h1 class="text-4xl md:text-5xl font-bold mb-4 fade-in">Contact <span class="gradient-text">Us</span></h1>
+            <p class="text-xl text-gray-300 max-w-2xl mx-auto fade-in">
+                Have questions or need support? Reach out to our team and we'll get back to you as soon as possible.
+            </p>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="py-10 px-6">
+        <div class="container mx-auto">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                <!-- Contact Form -->
+                <div class="contact-card fade-in">
+                    <h2 class="text-2xl font-bold mb-6">Send us a Message</h2>
+                    <form id="contactForm">
+                        <div class="mb-4">
+                            <label for="name" class="block mb-2">Name</label>
+                            <input type="text" id="name" class="form-input" placeholder="Your name" value="Dapsz-ID">
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="email" class="block mb-2">Email</label>
+                            <input type="email" id="email" class="form-input" placeholder="Your email" value="dapsz1959@gmail.com">
+                        </div>
+                        
+                        <div class="mb-6">
+                            <label for="message" class="block mb-2">Message</label>
+                            <textarea id="message" class="form-textarea" placeholder="Your message"></textarea>
+                        </div>
+                        
+                        <button type="submit" class="neon-button text-white font-semibold py-3 px-8 rounded-full w-full">
+                            Send Message
+                        </button>
+                    </form>
+                </div>
+                
+                <!-- Contact Information -->
+                <div class="fade-in">
+                    <h2 class="text-2xl font-bold mb-6">Get in Touch</h2>
+                    
+                    <div class="contact-card mb-6">
+                        <div class="contact-info">
+                            <i class="fab fa-whatsapp"></i>
+                            <div>
+                                <h3 class="font-semibold">WhatsApp</h3>
+                                <a href="https://wa.me/6282197991725" target="_blank" class="text-cyan-400 hover:underline">wa.me/6282197991725</a>
+                            </div>
+                        </div>
+                        
+                        <div class="contact-info">
+                            <i class="fas fa-envelope"></i>
+                            <div>
+                                <h3 class="font-semibold">Email Support</h3>
+                                <a href="mailto:dapsz1959@gmail.com" class="text-cyan-400 hover:underline">dapsz1959@gmail.com</a>
+                            </div>
+                        </div>
+                        
+                        <div class="contact-info">
+                            <i class="fab fa-github"></i>
+                            <div>
+                                <h3 class="font-semibold">Github</h3>
+                                <a href="https://github.com/Dapsz-ID" target="_blank" class="text-cyan-400 hover:underline">Dapsz-ID</a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-card">
+                        <h3 class="text-xl font-semibold mb-4">Business Hours</h3>
+                        <div class="space-y-2">
+                            <div class="flex justify-between">
+                                <span>Monday - Friday</span>
+                                <span>9:00 AM - 6:00 PM</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Saturday</span>
+                                <span>10:00 AM - 4:00 PM</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Sunday</span>
+                                <span>Closed</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Map Section -->
+    <section class="py-20 px-6">
+        <div class="container mx-auto">
+            <h2 class="text-3xl md:text-4xl font-bold text-center mb-16 fade-in">Our Location</h2>
+            
+            <div class="contact-card fade-in">
+                <div class="aspect-w-16 aspect-h-9">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3966.5212609258563!2d106.82692631476864!3d-6.175391995531354!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e69f3e945e34b9d%3A0x5371bf0fdad786a2!2sJakarta%2C%20Indonesia!5e0!3m2!1sen!2sus!4v1620000000000!5m2!1sen!2sus" width="100%" height="450" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-12 px-6 bg-black">
+        <div class="container mx-auto">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-6 md:mb-0">
+                    <div class="flex items-center space-x-2 mb-4">
+                        <img src="https://z-cdn-media.chatglm.cn/files/0fc747a7-fe28-466d-b18a-4e61b47d372c_ChatGPT%20Image%2022%20Nov%202025,%2022.40.21.png?auth_key=1863869110-701803fa97704936a803a6981cd856ab-0-8781c5035987669865a5de21519dbff6" alt="Vyncore Store Logo" class="h-10">
+                        <span class="text-xl font-bold">Vyncore Store</span>
+                    </div>
+                    <p class="text-gray-400">Powerful Cloud & Game Hosting Solutions</p>
+                </div>
+                
+                <div class="flex space-x-6">
+                    <a href="#" class="text-gray-400 hover:text-cyan-400 transition">
+                        <i class="fab fa-twitter text-xl"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-cyan-400 transition">
+                        <i class="fab fa-facebook text-xl"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-cyan-400 transition">
+                        <i class="fab fa-instagram text-xl"></i>
+                    </a>
+                    <a href="https://github.com/Dapsz-ID" target="_blank" class="text-gray-400 hover:text-cyan-400 transition">
+                        <i class="fab fa-github text-xl"></i>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-500">
+                <p>&copy; 2025 Vyncore Store. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="auth.js"></script>
+    <script>
+        // Hamburger menu toggle
+        const hamburger = document.querySelector('.hamburger');
+        const navMenu = document.querySelector('.nav-menu');
+        
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('active');
+            navMenu.classList.toggle('active');
+        });
+        
+        // Close menu when clicking on a link
+        document.querySelectorAll('.nav-menu a').forEach(link => {
+            link.addEventListener('click', () => {
+                hamburger.classList.remove('active');
+                navMenu.classList.remove('active');
+            });
+        });
+        
+        // Form submission
+        document.getElementById('contactForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Get form values
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const message = document.getElementById('message').value;
+            
+            // Simple validation
+            if (!name || !email || !message) {
+                alert('Please fill in all fields');
+                return;
+            }
+            
+            // Here you would normally send the form data to a server
+            // For this example, we'll just show a success message
+            alert('Thank you for your message! We will get back to you soon.');
+            
+            // Reset form
+            document.getElementById('message').value = '';
+        });
+        
+        // Fade in animation on scroll
+        const fadeElements = document.querySelectorAll('.fade-in');
+        
+        const fadeInOnScroll = () => {
+            fadeElements.forEach(element => {
+                const elementTop = element.getBoundingClientRect().top;
+                const elementVisible = 150;
+                
+                if (elementTop < window.innerHeight - elementVisible) {
+                    element.classList.add('visible');
+                }
+            });
+        };
+        
+        window.addEventListener('scroll', fadeInOnScroll);
+        fadeInOnScroll(); // Check on page load
+    </script>
+</body>
+</html>
