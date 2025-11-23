@@ -1,0 +1,1629 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard - Vyncore Store</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --neon-blue: #00d4ff;
+            --neon-purple: #9d00ff;
+            --dark-bg: #0a0a0f;
+            --card-bg: #121218;
+            --sidebar-bg: #0d0d14;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--dark-bg);
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+        
+        .gradient-text {
+            background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .neon-border {
+            border: 1px solid transparent;
+            background: linear-gradient(var(--dark-bg), var(--dark-bg)) padding-box,
+                        linear-gradient(90deg, var(--neon-blue), var(--neon-purple)) border-box;
+        }
+        
+        .neon-button {
+            background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple));
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .neon-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 212, 255, 0.3);
+        }
+        
+        .neon-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.2);
+            transition: left 0.5s;
+        }
+        
+        .neon-button:hover::before {
+            left: 100%;
+        }
+        
+        .sidebar {
+            background-color: var(--sidebar-bg);
+            width: 250px;
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            overflow-y: auto;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+        
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .sidebar-menu {
+            padding: 20px 0;
+        }
+        
+        .sidebar-menu li {
+            margin-bottom: 5px;
+        }
+        
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            color: #a0a0b8;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .sidebar-menu a:hover,
+        .sidebar-menu a.active {
+            background-color: rgba(0, 212, 255, 0.1);
+            color: var(--neon-blue);
+            border-left: 3px solid var(--neon-blue);
+        }
+        
+        .sidebar-menu i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+        
+        .main-content {
+            margin-left: 250px;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .dashboard-card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 24px;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            height: 100%;
+        }
+        
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--neon-blue);
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.2);
+        }
+        
+        .stat-card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--neon-blue);
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.2);
+        }
+        
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+        
+        .stat-icon.blue {
+            background-color: rgba(0, 212, 255, 0.2);
+            color: var(--neon-blue);
+        }
+        
+        .stat-icon.purple {
+            background-color: rgba(157, 0, 255, 0.2);
+            color: var(--neon-purple);
+        }
+        
+        .stat-icon.green {
+            background-color: rgba(46, 213, 115, 0.2);
+            color: #2ed573;
+        }
+        
+        .stat-icon.orange {
+            background-color: rgba(255, 159, 67, 0.2);
+            color: #ff9f43;
+        }
+        
+        .toggle-sidebar {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1001;
+            background-color: var(--card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 10px;
+            cursor: pointer;
+        }
+        
+        .table-container {
+            overflow-x: auto;
+        }
+        
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .data-table th,
+        .data-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .data-table th {
+            background-color: rgba(0, 212, 255, 0.1);
+            color: var(--neon-blue);
+            font-weight: 600;
+        }
+        
+        .data-table tr:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .status-badge.active {
+            background-color: rgba(46, 213, 115, 0.2);
+            color: #2ed573;
+        }
+        
+        .status-badge.pending {
+            background-color: rgba(255, 159, 67, 0.2);
+            color: #ff9f43;
+        }
+        
+        .status-badge.inactive {
+            background-color: rgba(255, 71, 87, 0.2);
+            color: #ff4757;
+        }
+        
+        .product-card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--neon-blue);
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.2);
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 30px;
+            width: 90%;
+            max-width: 500px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .form-input {
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 12px 16px;
+            color: white;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: var(--neon-blue);
+            box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.1);
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 500;
+            z-index: 3000;
+            transform: translateX(150%);
+            transition: transform 0.3s ease;
+        }
+        
+        .notification.show {
+            transform: translateX(0);
+        }
+        
+        .notification.success {
+            background-color: rgba(46, 213, 115, 0.9);
+        }
+        
+        .notification.error {
+            background-color: rgba(255, 71, 87, 0.9);
+        }
+        
+        .server-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .server-action-btn {
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .server-action-btn.start {
+            background-color: rgba(46, 213, 115, 0.2);
+            color: #2ed573;
+        }
+        
+        .server-action-btn.start:hover {
+            background-color: rgba(46, 213, 115, 0.3);
+        }
+        
+        .server-action-btn.stop {
+            background-color: rgba(255, 71, 87, 0.2);
+            color: #ff4757;
+        }
+        
+        .server-action-btn.stop:hover {
+            background-color: rgba(255, 71, 87, 0.3);
+        }
+        
+        .server-action-btn.restart {
+            background-color: rgba(255, 159, 67, 0.2);
+            color: #ff9f43;
+        }
+        
+        .server-action-btn.restart:hover {
+            background-color: rgba(255, 159, 67, 0.3);
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                left: -250px;
+            }
+            
+            .sidebar.active {
+                left: 0;
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .toggle-sidebar {
+                display: block;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Toggle Sidebar Button -->
+    <div class="toggle-sidebar" id="toggleSidebar">
+        <i class="fas fa-bars"></i>
+    </div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="flex items-center space-x-2">
+                <img src="https://z-cdn-media.chatglm.cn/files/0fc747a7-fe28-466d-b18a-4e61b47d372c_ChatGPT%20Image%2022%20Nov%202025,%2022.40.21.png?auth_key=1863869110-701803fa97704936a803a6981cd856ab-0-8781c5035987669865a5de21519dbff6" alt="Vyncore Store Logo" class="h-10">
+                <span class="text-xl font-bold">Vyncore User</span>
+            </div>
+        </div>
+        
+        <ul class="sidebar-menu">
+            <li>
+                <a href="#" class="active" data-page="dashboard">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li>
+                <a href="#" data-page="servers">
+                    <i class="fas fa-server"></i>
+                    <span>My Servers</span>
+                </a>
+            </li>
+            <li>
+                <a href="#" data-page="orders">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span>My Orders</span>
+                </a>
+            </li>
+            <li>
+                <a href="#" data-page="billing">
+                    <i class="fas fa-file-invoice-dollar"></i>
+                    <span>Billing</span>
+                </a>
+            </li>
+            <li>
+                <a href="#" data-page="profile">
+                    <i class="fas fa-user"></i>
+                    <span>Profile</span>
+                </a>
+            </li>
+            <li>
+                <a href="#" data-page="settings">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
+                </a>
+            </li>
+            <li>
+                <a href="#" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
+            </li>
+        </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Header -->
+        <header class="flex justify-between items-center mb-8">
+            <div>
+                <h1 class="text-2xl font-bold" id="pageTitle">Dashboard</h1>
+                <p class="text-gray-400">Welcome back, <span id="userEmail"></span></p>
+            </div>
+            <div class="flex items-center space-x-4">
+                <div class="relative">
+                    <input type="text" id="searchInput" placeholder="Search..." class="bg-gray-800 rounded-full py-2 px-4 pl-10 focus:outline-none focus:ring-2 focus:ring-cyan-500">
+                    <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                </div>
+                <div class="w-10 h-10 rounded-full overflow-hidden">
+                    <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="User" id="headerProfileImg">
+                </div>
+            </div>
+        </header>
+
+        <!-- Dashboard Page -->
+        <div id="dashboardPage" class="page-content">
+            <!-- Stats Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div class="stat-card">
+                    <div class="stat-icon blue">
+                        <i class="fas fa-server"></i>
+                    </div>
+                    <h3 class="text-gray-400 mb-1">Active Servers</h3>
+                    <p class="text-2xl font-bold" id="activeServers">2</p>
+                    <p class="text-gray-500 text-sm mt-2">
+                        <i class="fas fa-info-circle"></i> Total servers
+                    </p>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon purple">
+                        <i class="fas fa-shopping-cart"></i>
+                    </div>
+                    <h3 class="text-gray-400 mb-1">Orders</h3>
+                    <p class="text-2xl font-bold" id="totalOrders">3</p>
+                    <p class="text-gray-500 text-sm mt-2">
+                        <i class="fas fa-info-circle"></i> Total orders
+                    </p>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon green">
+                        <i class="fas fa-dollar-sign"></i>
+                    </div>
+                    <h3 class="text-gray-400 mb-1">Spent</h3>
+                    <p class="text-2xl font-bold" id="totalSpent">$42.97</p>
+                    <p class="text-gray-500 text-sm mt-2">
+                        <i class="fas fa-info-circle"></i> Total spent
+                    </p>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon orange">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <h3 class="text-gray-400 mb-1">Next Due</h3>
+                    <p class="text-2xl font-bold" id="nextDue">Jun 15</p>
+                    <p class="text-gray-500 text-sm mt-2">
+                        <i class="fas fa-info-circle"></i> Next payment
+                    </p>
+                </div>
+            </div>
+
+            <!-- Order Services Section -->
+            <div class="dashboard-card mb-8">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-xl font-bold">Order New Services</h2>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="product-card">
+                        <div class="text-cyan-400 text-4xl mb-4">
+                            <i class="fas fa-gamepad"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2">Panel Pterodactyl</h3>
+                        <p class="text-gray-400 mb-4 flex-grow">
+                            Complete game server management with our intuitive Pterodactyl panel.
+                        </p>
+                        <div class="text-xl font-bold mb-4">Starting at <span class="gradient-text">$5.99/mo</span></div>
+                        <button class="neon-button text-white font-semibold py-2 px-4 rounded-full w-full order-btn" data-product="Panel Pterodactyl" data-price="5.99">
+                            Order Now
+                        </button>
+                    </div>
+                    
+                    <div class="product-card">
+                        <div class="text-purple-500 text-4xl mb-4">
+                            <i class="fas fa-cloud"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2">VPS / Cloud Hosting</h3>
+                        <p class="text-gray-400 mb-4 flex-grow">
+                            High-performance virtual private servers with SSD storage.
+                        </p>
+                        <div class="text-xl font-bold mb-4">Starting at <span class="gradient-text">$12.99/mo</span></div>
+                        <button class="neon-button text-white font-semibold py-2 px-4 rounded-full w-full order-btn" data-product="VPS / Cloud Hosting" data-price="12.99">
+                            Order Now
+                        </button>
+                    </div>
+                    
+                    <div class="product-card">
+                        <div class="text-cyan-400 text-4xl mb-4">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2">Bot Hosting</h3>
+                        <p class="text-gray-400 mb-4 flex-grow">
+                            Reliable hosting for Discord bots and other automation tools.
+                        </p>
+                        <div class="text-xl font-bold mb-4">Starting at <span class="gradient-text">$3.99/mo</span></div>
+                        <button class="neon-button text-white font-semibold py-2 px-4 rounded-full w-full order-btn" data-product="Bot Hosting" data-price="3.99">
+                            Order Now
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Orders -->
+            <div class="dashboard-card">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-xl font-bold">Recent Orders</h2>
+                    <a href="#" class="text-cyan-400 hover:underline" data-page="orders">View All</a>
+                </div>
+                
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Product</th>
+                                <th>Date</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recentOrdersTable">
+                            <tr>
+                                <td>#ORD001</td>
+                                <td>Panel Pterodactyl</td>
+                                <td>2025-05-15</td>
+                                <td>$5.99</td>
+                                <td><span class="status-badge active">Active</span></td>
+                                <td>
+                                    <button class="text-cyan-400 hover:text-cyan-300 view-order" data-id="ORD001">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>#ORD002</td>
+                                <td>Bot Hosting</td>
+                                <td>2025-05-10</td>
+                                <td>$3.99</td>
+                                <td><span class="status-badge active">Active</span></td>
+                                <td>
+                                    <button class="text-cyan-400 hover:text-cyan-300 view-order" data-id="ORD002">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>#ORD003</td>
+                                <td>VPS / Cloud Hosting</td>
+                                <td>2025-05-05</td>
+                                <td>$12.99</td>
+                                <td><span class="status-badge pending">Pending</span></td>
+                                <td>
+                                    <button class="text-cyan-400 hover:text-cyan-300 view-order" data-id="ORD003">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Servers Page -->
+        <div id="serversPage" class="page-content" style="display: none;">
+            <div class="dashboard-card mb-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-xl font-bold">My Servers</h2>
+                    <button class="neon-button text-white font-semibold py-2 px-6 rounded-full" id="addServerBtn">
+                        <i class="fas fa-plus mr-2"></i> Add Server
+                    </button>
+                </div>
+                
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Server Name</th>
+                                <th>Type</th>
+                                <th>Location</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="serversTable">
+                            <tr>
+                                <td>Minecraft Server</td>
+                                <td>Panel Pterodactyl</td>
+                                <td>Indonesia</td>
+                                <td><span class="status-badge active">Online</span></td>
+                                <td>
+                                    <div class="server-actions">
+                                        <button class="server-action-btn start" data-action="start" data-server="Minecraft Server">
+                                            <i class="fas fa-play"></i> Start
+                                        </button>
+                                        <button class="server-action-btn stop" data-action="stop" data-server="Minecraft Server">
+                                            <i class="fas fa-stop"></i> Stop
+                                        </button>
+                                        <button class="server-action-btn restart" data-action="restart" data-server="Minecraft Server">
+                                            <i class="fas fa-redo"></i> Restart
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Discord Bot</td>
+                                <td>Bot Hosting</td>
+                                <td>Singapore</td>
+                                <td><span class="status-badge active">Online</span></td>
+                                <td>
+                                    <div class="server-actions">
+                                        <button class="server-action-btn start" data-action="start" data-server="Discord Bot">
+                                            <i class="fas fa-play"></i> Start
+                                        </button>
+                                        <button class="server-action-btn stop" data-action="stop" data-server="Discord Bot">
+                                            <i class="fas fa-stop"></i> Stop
+                                        </button>
+                                        <button class="server-action-btn restart" data-action="restart" data-server="Discord Bot">
+                                            <i class="fas fa-redo"></i> Restart
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Orders Page -->
+        <div id="ordersPage" class="page-content" style="display: none;">
+            <div class="dashboard-card mb-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-xl font-bold">My Orders</h2>
+                </div>
+                
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Product</th>
+                                <th>Date</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ordersTable">
+                            <tr>
+                                <td>#ORD001</td>
+                                <td>Panel Pterodactyl</td>
+                                <td>2025-05-15</td>
+                                <td>$5.99</td>
+                                <td><span class="status-badge active">Active</span></td>
+                                <td>
+                                    <button class="text-cyan-400 hover:text-cyan-300 view-order" data-id="ORD001">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>#ORD002</td>
+                                <td>Bot Hosting</td>
+                                <td>2025-05-10</td>
+                                <td>$3.99</td>
+                                <td><span class="status-badge active">Active</span></td>
+                                <td>
+                                    <button class="text-cyan-400 hover:text-cyan-300 view-order" data-id="ORD002">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>#ORD003</td>
+                                <td>VPS / Cloud Hosting</td>
+                                <td>2025-05-05</td>
+                                <td>$12.99</td>
+                                <td><span class="status-badge pending">Pending</span></td>
+                                <td>
+                                    <button class="text-cyan-400 hover:text-cyan-300 view-order" data-id="ORD003">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Billing Page -->
+        <div id="billingPage" class="page-content" style="display: none;">
+            <div class="dashboard-card mb-6">
+                <h2 class="text-xl font-bold mb-6">Billing Information</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div class="dashboard-card">
+                        <h3 class="text-lg font-semibold mb-4">Payment Methods</h3>
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-center p-4 bg-gray-800 rounded-lg">
+                                <div class="flex items-center">
+                                    <i class="fab fa-cc-visa text-blue-500 text-2xl mr-3"></i>
+                                    <div>
+                                        <p class="font-medium">Visa ending in 1234</p>
+                                        <p class="text-gray-400 text-sm">Expires 12/2025</p>
+                                    </div>
+                                </div>
+                                <span class="text-cyan-400">Default</span>
+                            </div>
+                            <div class="flex justify-between items-center p-4 bg-gray-800 rounded-lg">
+                                <div class="flex items-center">
+                                    <i class="fab fa-paypal text-blue-400 text-2xl mr-3"></i>
+                                    <div>
+                                        <p class="font-medium">PayPal</p>
+                                        <p class="text-gray-400 text-sm">user@example.com</p>
+                                    </div>
+                                </div>
+                                <button class="text-cyan-400 hover:text-cyan-300">Set Default</button>
+                            </div>
+                        </div>
+                        <button class="neon-button text-white font-semibold py-2 px-6 rounded-full mt-4">
+                            <i class="fas fa-plus mr-2"></i> Add Payment Method
+                        </button>
+                    </div>
+                    
+                    <div class="dashboard-card">
+                        <h3 class="text-lg font-semibold mb-4">Billing History</h3>
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-center p-4 bg-gray-800 rounded-lg">
+                                <div>
+                                    <p class="font-medium">Panel Pterodactyl</p>
+                                    <p class="text-gray-400 text-sm">May 15, 2025</p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="font-medium">$5.99</p>
+                                    <p class="text-gray-400 text-sm">Paid</p>
+                                </div>
+                            </div>
+                            <div class="flex justify-between items-center p-4 bg-gray-800 rounded-lg">
+                                <div>
+                                    <p class="font-medium">Bot Hosting</p>
+                                    <p class="text-gray-400 text-sm">May 10, 2025</p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="font-medium">$3.99</p>
+                                    <p class="text-gray-400 text-sm">Paid</p>
+                                </div>
+                            </div>
+                            <div class="flex justify-between items-center p-4 bg-gray-800 rounded-lg">
+                                <div>
+                                    <p class="font-medium">VPS / Cloud Hosting</p>
+                                    <p class="text-gray-400 text-sm">May 5, 2025</p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="font-medium">$12.99</p>
+                                    <p class="text-gray-400 text-sm">Paid</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="dashboard-card">
+                    <h3 class="text-lg font-semibold mb-4">Upcoming Invoices</h3>
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Invoice ID</th>
+                                    <th>Product</th>
+                                    <th>Due Date</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>#INV001</td>
+                                    <td>Panel Pterodactyl</td>
+                                    <td>Jun 15, 2025</td>
+                                    <td>$5.99</td>
+                                    <td><span class="status-badge pending">Pending</span></td>
+                                    <td>
+                                        <button class="neon-button text-white font-semibold py-1 px-3 rounded-full text-sm">
+                                            Pay Now
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>#INV002</td>
+                                    <td>Bot Hosting</td>
+                                    <td>Jun 10, 2025</td>
+                                    <td>$3.99</td>
+                                    <td><span class="status-badge pending">Pending</span></td>
+                                    <td>
+                                        <button class="neon-button text-white font-semibold py-1 px-3 rounded-full text-sm">
+                                            Pay Now
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Profile Page -->
+        <div id="profilePage" class="page-content" style="display: none;">
+            <div class="dashboard-card">
+                <h2 class="text-xl font-bold mb-6">My Profile</h2>
+                
+                <div class="flex flex-col md:flex-row gap-8">
+                    <div class="md:w-1/3">
+                        <div class="text-center">
+                            <div class="relative mb-4">
+                                <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="User Profile" class="w-32 h-32 rounded-full mx-auto border-3 border-cyan-500" id="profileImage">
+                                <div class="absolute bottom-0 right-1/3 transform translate-x-1/2 bg-cyan-500 text-white rounded-full w-8 h-8 flex items-center justify-center cursor-pointer" id="changeProfilePic">
+                                    <i class="fas fa-camera text-sm"></i>
+                                </div>
+                            </div>
+                            <h3 class="text-xl font-semibold" id="profileName">User Name</h3>
+                            <p class="text-gray-400" id="profileEmail">user@example.com</p>
+                            
+                            <div class="mt-6">
+                                <button class="neon-button text-white font-semibold py-2 px-6 rounded-full w-full mb-3" id="changePasswordBtn">
+                                    <i class="fas fa-key mr-2"></i> Change Password
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="md:w-2/3">
+                        <h3 class="text-lg font-semibold mb-4">Personal Information</h3>
+                        <form id="profileForm">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                                <div>
+                                    <label class="block mb-2">First Name</label>
+                                    <input type="text" id="firstName" class="form-input" value="User">
+                                </div>
+                                <div>
+                                    <label class="block mb-2">Last Name</label>
+                                    <input type="text" id="lastName" class="form-input" value="Name">
+                                </div>
+                                <div>
+                                    <label class="block mb-2">Email</label>
+                                    <input type="email" id="email" class="form-input" value="user@example.com">
+                                </div>
+                                <div>
+                                    <label class="block mb-2">Phone</label>
+                                    <input type="tel" id="phone" class="form-input" value="+62 812 3456 7890">
+                                </div>
+                                <div>
+                                    <label class="block mb-2">Address</label>
+                                    <input type="text" id="address" class="form-input" value="123 Main St, City">
+                                </div>
+                                <div>
+                                    <label class="block mb-2">Country</label>
+                                    <input type="text" id="country" class="form-input" value="Indonesia">
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <button type="submit" class="neon-button text-white font-semibold py-3 px-8 rounded-full">
+                                    Save Changes
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Page -->
+        <div id="settingsPage" class="page-content" style="display: none;">
+            <div class="dashboard-card">
+                <h2 class="text-xl font-bold mb-6">Account Settings</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <h3 class="text-lg font-semibold mb-4">Notification Preferences</h3>
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="font-medium">Email Notifications</p>
+                                    <p class="text-gray-400 text-sm">Receive notifications via email</p>
+                                </div>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" class="sr-only peer" checked>
+                                    <div class="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-cyan-500"></div>
+                                </label>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="font-medium">SMS Notifications</p>
+                                    <p class="text-gray-400 text-sm">Receive notifications via SMS</p>
+                                </div>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" class="sr-only peer">
+                                    <div class="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-cyan-500"></div>
+                                </label>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="font-medium">Push Notifications</p>
+                                    <p class="text-gray-400 text-sm">Receive push notifications</p>
+                                </div>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" class="sr-only peer" checked>
+                                    <div class="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-cyan-500"></div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h3 class="text-lg font-semibold mb-4">Security</h3>
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between p-4 bg-gray-800 rounded-lg">
+                                <div>
+                                    <p class="font-medium">Two-Factor Authentication</p>
+                                    <p class="text-gray-400 text-sm">Add an extra layer of security</p>
+                                </div>
+                                <button class="text-cyan-400 hover:text-cyan-300">Enable</button>
+                            </div>
+                            <div class="flex items-center justify-between p-4 bg-gray-800 rounded-lg">
+                                <div>
+                                    <p class="font-medium">Login History</p>
+                                    <p class="text-gray-400 text-sm">View your recent login activity</p>
+                                </div>
+                                <button class="text-cyan-400 hover:text-cyan-300">View</button>
+                            </div>
+                            <div class="flex items-center justify-between p-4 bg-gray-800 rounded-lg">
+                                <div>
+                                    <p class="font-medium">Connected Devices</p>
+                                    <p class="text-gray-400 text-sm">Manage devices connected to your account</p>
+                                </div>
+                                <button class="text-cyan-400 hover:text-cyan-300">Manage</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-8">
+                    <h3 class="text-lg font-semibold mb-4">Danger Zone</h3>
+                    <div class="p-4 bg-red-900 bg-opacity-20 border border-red-800 rounded-lg">
+                        <p class="font-medium mb-2">Delete Account</p>
+                        <p class="text-gray-400 mb-4">Permanently delete your account and all data</p>
+                        <button class="bg-red-600 text-white font-semibold py-2 px-6 rounded-full hover:bg-red-700 transition">
+                            Delete Account
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modals -->
+    <!-- Order Confirmation Modal -->
+    <div id="orderModal" class="modal">
+        <div class="modal-content">
+            <h3 class="text-xl font-bold mb-4">Order Service</h3>
+            <form id="orderForm">
+                <div class="mb-4">
+                    <label class="block mb-2">Service</label>
+                    <input type="text" id="orderService" class="form-input" readonly>
+                </div>
+                <div class="mb-4">
+                    <label class="block mb-2">Price</label>
+                    <input type="text" id="orderPrice" class="form-input" readonly>
+                </div>
+                <div class="mb-4">
+                    <label class="block mb-2">Server Name (Optional)</label>
+                    <input type="text" id="serverName" class="form-input" placeholder="Enter a name for your server">
+                </div>
+                <div class="mb-6">
+                    <label class="block mb-2">Location</label>
+                    <select id="serverLocation" class="form-input">
+                        <option value="Indonesia">Indonesia</option>
+                        <option value="Singapore">Singapore</option>
+                        <option value="USA">USA</option>
+                        <option value="Europe">Europe</option>
+                    </select>
+                </div>
+                <div class="flex justify-end space-x-3">
+                    <button type="button" class="px-4 py-2 bg-gray-700 rounded-lg hover:bg-gray-600 transition" id="cancelOrderBtn">Cancel</button>
+                    <button type="submit" class="neon-button text-white font-semibold py-2 px-6 rounded-full">Confirm Order</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Server Modal -->
+    <div id="addServerModal" class="modal">
+        <div class="modal-content">
+            <h3 class="text-xl font-bold mb-4">Add New Server</h3>
+            <form id="addServerForm">
+                <div class="mb-4">
+                    <label class="block mb-2">Server Name</label>
+                    <input type="text" id="newServerName" class="form-input" required>
+                </div>
+                <div class="mb-4">
+                    <label class="block mb-2">Server Type</label>
+                    <select id="newServerType" class="form-input" required>
+                        <option value="">Select Type</option>
+                        <option value="Panel Pterodactyl">Panel Pterodactyl</option>
+                        <option value="VPS / Cloud Hosting">VPS / Cloud Hosting</option>
+                        <option value="Bot Hosting">Bot Hosting</option>
+                        <option value="Website Hosting">Website Hosting</option>
+                    </select>
+                </div>
+                <div class="mb-6">
+                    <label class="block mb-2">Location</label>
+                    <select id="newServerLocation" class="form-input" required>
+                        <option value="">Select Location</option>
+                        <option value="Indonesia">Indonesia</option>
+                        <option value="Singapore">Singapore</option>
+                        <option value="USA">USA</option>
+                        <option value="Europe">Europe</option>
+                    </select>
+                </div>
+                <div class="flex justify-end space-x-3">
+                    <button type="button" class="px-4 py-2 bg-gray-700 rounded-lg hover:bg-gray-600 transition" id="cancelAddServerBtn">Cancel</button>
+                    <button type="submit" class="neon-button text-white font-semibold py-2 px-6 rounded-full">Add Server</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Change Password Modal -->
+    <div id="passwordModal" class="modal">
+        <div class="modal-content">
+            <h3 class="text-xl font-bold mb-4">Change Password</h3>
+            <form id="passwordForm">
+                <div class="mb-4">
+                    <label class="block mb-2">Current Password</label>
+                    <input type="password" id="currentPassword" class="form-input" required>
+                </div>
+                <div class="mb-4">
+                    <label class="block mb-2">New Password</label>
+                    <input type="password" id="newPassword" class="form-input" required>
+                </div>
+                <div class="mb-6">
+                    <label class="block mb-2">Confirm New Password</label>
+                    <input type="password" id="confirmPassword" class="form-input" required>
+                </div>
+                <div class="flex justify-end space-x-3">
+                    <button type="button" class="px-4 py-2 bg-gray-700 rounded-lg hover:bg-gray-600 transition" id="cancelPasswordBtn">Cancel</button>
+                    <button type="submit" class="neon-button text-white font-semibold py-2 px-6 rounded-full">Change Password</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div id="notification" class="notification"></div>
+
+    <!-- Hidden file input for profile picture -->
+    <input type="file" id="profilePicInput" accept="image/*" style="display: none;">
+
+    <script>
+        // Check if user is logged in
+        window.addEventListener('DOMContentLoaded', () => {
+            const isLoggedIn = localStorage.getItem('isLoggedIn');
+            const userType = localStorage.getItem('userType');
+            const userEmail = localStorage.getItem('userEmail');
+            
+            if (isLoggedIn !== 'true' || userType !== 'user') {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            // Display user email
+            document.getElementById('userEmail').textContent = userEmail;
+            
+            // Initialize the page
+            initializePage();
+        });
+        
+        // Initialize page
+        function initializePage() {
+            // Initialize sidebar navigation
+            initializeSidebar();
+            
+            // Initialize search functionality
+            initializeSearch();
+            
+            // Initialize modals
+            initializeModals();
+            
+            // Initialize profile picture change
+            initializeProfilePicture();
+            
+            // Initialize server actions
+            initializeServerActions();
+            
+            // Load user data
+            loadUserData();
+        }
+        
+        // Initialize sidebar navigation
+        function initializeSidebar() {
+            const sidebarLinks = document.querySelectorAll('.sidebar-menu a[data-page]');
+            const pageContents = document.querySelectorAll('.page-content');
+            const pageTitle = document.getElementById('pageTitle');
+            
+            sidebarLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    
+                    // Remove active class from all links
+                    sidebarLinks.forEach(l => l.classList.remove('active'));
+                    
+                    // Add active class to clicked link
+                    link.classList.add('active');
+                    
+                    // Get page name
+                    const pageName = link.getAttribute('data-page');
+                    
+                    // Hide all page contents
+                    pageContents.forEach(content => {
+                        content.style.display = 'none';
+                    });
+                    
+                    // Show selected page content
+                    const selectedPage = document.getElementById(pageName + 'Page');
+                    if (selectedPage) {
+                        selectedPage.style.display = 'block';
+                        
+                        // Update page title
+                        const linkText = link.querySelector('span').textContent;
+                        pageTitle.textContent = linkText;
+                    }
+                });
+            });
+        }
+        
+        // Initialize search functionality
+        function initializeSearch() {
+            const searchInput = document.getElementById('searchInput');
+            
+            searchInput.addEventListener('input', (e) => {
+                const searchTerm = e.target.value.toLowerCase();
+                
+                // Get all tables
+                const tables = document.querySelectorAll('.data-table');
+                
+                tables.forEach(table => {
+                    const rows = table.querySelectorAll('tbody tr');
+                    
+                    rows.forEach(row => {
+                        const text = row.textContent.toLowerCase();
+                        
+                        if (text.includes(searchTerm)) {
+                            row.style.display = '';
+                        } else {
+                            row.style.display = 'none';
+                        }
+                    });
+                });
+            });
+        }
+        
+        // Initialize modals
+        function initializeModals() {
+            // Order modal
+            const orderModal = document.getElementById('orderModal');
+            const orderButtons = document.querySelectorAll('.order-btn');
+            const cancelOrderBtn = document.getElementById('cancelOrderBtn');
+            const orderForm = document.getElementById('orderForm');
+            
+            orderButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const product = button.getAttribute('data-product');
+                    const price = button.getAttribute('data-price');
+                    
+                    // Fill form with product data
+                    document.getElementById('orderService').value = product;
+                    document.getElementById('orderPrice').value = '$' + price + '/mo';
+                    
+                    // Show modal
+                    orderModal.style.display = 'flex';
+                });
+            });
+            
+            cancelOrderBtn.addEventListener('click', () => {
+                orderModal.style.display = 'none';
+            });
+            
+            orderForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                
+                // Get form values
+                const service = document.getElementById('orderService').value;
+                const price = document.getElementById('orderPrice').value;
+                const serverName = document.getElementById('serverName').value;
+                const location = document.getElementById('serverLocation').value;
+                
+                // Generate order ID
+                const ordersTable = document.getElementById('ordersTable');
+                const rowCount = ordersTable.rows.length;
+                const orderId = '#ORD' + String(rowCount + 1).padStart(3, '0');
+                
+                // Get current date
+                const currentDate = new Date().toISOString().split('T')[0];
+                
+                // Add order to table
+                addOrderToTable(orderId, service, currentDate, price, 'Pending');
+                
+                // Also add to recent orders table
+                const recentOrdersTable = document.getElementById('recentOrdersTable');
+                if (recentOrdersTable) {
+                    const recentRow = recentOrdersTable.insertRow(0);
+                    
+                    recentRow.innerHTML = `
+                        <td>${orderId}</td>
+                        <td>${service}</td>
+                        <td>${currentDate}</td>
+                        <td>${price}</td>
+                        <td><span class="status-badge pending">Pending</span></td>
+                        <td>
+                            <button class="text-cyan-400 hover:text-cyan-300 view-order" data-id="${orderId}">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </td>
+                    `;
+                    
+                    // Keep only the last 3 orders
+                    if (recentOrdersTable.rows.length > 3) {
+                        recentOrdersTable.deleteRow(3);
+                    }
+                }
+                
+                // Update stats
+                updateStats();
+                
+                // Show notification
+                showNotification('Order placed successfully!', 'success');
+                
+                // Close modal
+                orderModal.style.display = 'none';
+                
+                // Reset form
+                orderForm.reset();
+            });
+            
+            // Add server modal
+            const addServerModal = document.getElementById('addServerModal');
+            const addServerBtn = document.getElementById('addServerBtn');
+            const cancelAddServerBtn = document.getElementById('cancelAddServerBtn');
+            const addServerForm = document.getElementById('addServerForm');
+            
+            addServerBtn.addEventListener('click', () => {
+                addServerForm.reset();
+                addServerModal.style.display = 'flex';
+            });
+            
+            cancelAddServerBtn.addEventListener('click', () => {
+                addServerModal.style.display = 'none';
+            });
+            
+            addServerForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                
+                // Get form values
+                const serverName = document.getElementById('newServerName').value;
+                const serverType = document.getElementById('newServerType').value;
+                const serverLocation = document.getElementById('newServerLocation').value;
+                
+                // Add server to table
+                addServerToTable(serverName, serverType, serverLocation);
+                
+                // Update stats
+                updateStats();
+                
+                // Show notification
+                showNotification('Server added successfully!', 'success');
+                
+                // Close modal
+                addServerModal.style.display = 'none';
+            });
+            
+            // Change password modal
+            const passwordModal = document.getElementById('passwordModal');
+            const changePasswordBtn = document.getElementById('changePasswordBtn');
+            const cancelPasswordBtn = document.getElementById('cancelPasswordBtn');
+            const passwordForm = document.getElementById('passwordForm');
+            
+            changePasswordBtn.addEventListener('click', () => {
+                passwordForm.reset();
+                passwordModal.style.display = 'flex';
+            });
+            
+            cancelPasswordBtn.addEventListener('click', () => {
+                passwordModal.style.display = 'none';
+            });
+            
+            passwordForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                
+                // Get form values
+                const currentPassword = document.getElementById('currentPassword').value;
+                const newPassword = document.getElementById('newPassword').value;
+                const confirmPassword = document.getElementById('confirmPassword').value;
+                
+                // Validate passwords
+                if (newPassword !== confirmPassword) {
+                    showNotification('New passwords do not match!', 'error');
+                    return;
+                }
+                
+                // In a real application, you would verify the current password and update it
+                // For demo purposes, we'll just show a success message
+                showNotification('Password changed successfully!', 'success');
+                
+                // Close modal
+                passwordModal.style.display = 'none';
+            });
+            
+            // Profile form
+            const profileForm = document.getElementById('profileForm');
+            
+            profileForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                
+                // Get form values
+                const firstName = document.getElementById('firstName').value;
+                const lastName = document.getElementById('lastName').value;
+                const email = document.getElementById('email').value;
+                const phone = document.getElementById('phone').value;
+                const address = document.getElementById('address').value;
+                const country = document.getElementById('country').value;
+                
+                // Update profile display
+                document.getElementById('profileName').textContent = firstName + ' ' + lastName;
+                document.getElementById('profileEmail').textContent = email;
+                
+                // Save to localStorage
+                const userData = {
+                    firstName,
+                    lastName,
+                    email,
+                    phone,
+                    address,
+                    country
+                };
+                
+                localStorage.setItem('userData', JSON.stringify(userData));
+                
+                // Show notification
+                showNotification('Profile updated successfully!', 'success');
+            });
+            
+            // Close modals when clicking outside
+            window.addEventListener('click', (e) => {
+                if (e.target.classList.contains('modal')) {
+                    e.target.style.display = 'none';
+                }
+            });
+        }
+        
+        // Initialize profile picture change
+        function initializeProfilePicture() {
+            const changeProfilePic = document.getElementById('changeProfilePic');
+            const profilePicInput = document.getElementById('profilePicInput');
+            const profileImage = document.getElementById('profileImage');
+            const headerProfileImg = document.getElementById('headerProfileImg');
+            
+            changeProfilePic.addEventListener('click', () => {
+                profilePicInput.click();
+            });
+            
+            profilePicInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                
+                if (file) {
+                    const reader = new FileReader();
+                    
+                    reader.onload = (e) => {
+                        const imageUrl = e.target.result;
+                        profileImage.src = imageUrl;
+                        headerProfileImg.src = imageUrl;
+                        
+                        // Save to localStorage
+                        localStorage.setItem('userProfilePic', imageUrl);
+                        
+                        showNotification('Profile picture updated successfully!', 'success');
+                    };
+                    
+                    reader.readAsDataURL(file);
+                }
+            });
+            
+            // Load profile picture from localStorage if available
+            const savedProfilePic = localStorage.getItem('userProfilePic');
+            if (savedProfilePic) {
+                profileImage.src = savedProfilePic;
+                headerProfileImg.src = savedProfilePic;
+            }
+        }
+        
+        // Initialize server actions
+        function initializeServerActions() {
+            document.addEventListener('click', (e) => {
+                if (e.target.closest('.server-action-btn')) {
+                    const btn = e.target.closest('.server-action-btn');
+                    const action = btn.getAttribute('data-action');
+                    const server = btn.getAttribute('data-server');
+                    
+                    // Show notification based on action
+                    if (action === 'start') {
+                        showNotification(`Server "${server}" is starting...`, 'success');
+                    } else if (action === 'stop') {
+                        showNotification(`Server "${server}" is stopping...`, 'success');
+                    } else if (action === 'restart') {
+                        showNotification(`Server "${server}" is restarting...`, 'success');
+                    }
+                }
+            });
+        }
+        
+        // Load user data
+        function loadUserData() {
+            // Load user data from localStorage if available
+            const savedUserData = localStorage.getItem('userData');
+            if (savedUserData) {
+                const userData = JSON.parse(savedUserData);
+                
+                // Fill form with user data
+                document.getElementById('firstName').value = userData.firstName || '';
+                document.getElementById('lastName').value = userData.lastName || '';
+                document.getElementById('email').value = userData.email || '';
+                document.getElementById('phone').value = userData.phone || '';
+                document.getElementById('address').value = userData.address || '';
+                document.getElementById('country').value = userData.country || '';
+                
+                // Update profile display
+                document.getElementById('profileName').textContent = (userData.firstName || '') + ' ' + (userData.lastName || '');
+                document.getElementById('profileEmail').textContent = userData.email || '';
+            }
+        }
+        
+        // Toggle Sidebar
+        const toggleSidebar = document.getElementById('toggleSidebar');
+        const sidebar = document.getElementById('sidebar');
+        
+        toggleSidebar.addEventListener('click', () => {
+            sidebar.classList.toggle('active');
+        });
+        
+        // Logout functionality
+        document.getElementById('logoutBtn').addEventListener('click', (e) => {
+            e.preventDefault();
+            
+            // Clear localStorage
+            localStorage.removeItem('isLoggedIn');
+            localStorage.removeItem('userType');
+            localStorage.removeItem('userEmail');
+            
+            // Redirect to login page
+            window.location.href = 'login.html';
+        });
+        
+        // Show notification
+        function showNotification(message, type) {
+            const notification = document.getElementById('notification');
+            
+            notification.textContent = message;
+            notification.className = `notification ${type}`;
+            notification.classList.add('show');
+            
+            // Hide notification after 3 seconds
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+        
+        // Add order to table
+        function addOrderToTable(id, product, date, amount, status) {
+            const ordersTable = document.getElementById('ordersTable');
+            
+            const row = ordersTable.insertRow();
+            
+            // Create status badge
+            let statusClass = 'active';
+            if (status === 'Pending') statusClass = 'pending';
+            if (status === 'Inactive') statusClass = 'inactive';
+            
+            row.innerHTML = `
+                <td>${id}</td>
+                <td>${product}</td>
+                <td>${date}</td>
+                <td>${amount}</td>
+                <td><span class="status-badge ${statusClass}">${status}</span></td>
+                <td>
+                    <button class="text-cyan-400 hover:text-cyan-300 view-order" data-id="${id}">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </td>
+            `;
+        }
+        
+        // Add server to table
+        function addServerToTable(name, type, location) {
+            const serversTable = document.getElementById('serversTable');
+            
+            const row = serversTable.insertRow();
+            
+            row.innerHTML = `
+                <td>${name}</td>
+                <td>${type}</td>
+                <td>${location}</td>
+                <td><span class="status-badge active">Online</span></td>
+                <td>
+                    <div class="server-actions">
+                        <button class="server-action-btn start" data-action="start" data-server="${name}">
+                            <i class="fas fa-play"></i> Start
+                        </button>
+                        <button class="server-action-btn stop" data-action="stop" data-server="${name}">
+                            <i class="fas fa-stop"></i> Stop
+                        </button>
+                        <button class="server-action-btn restart" data-action="restart" data-server="${name}">
+                            <i class="fas fa-redo"></i> Restart
+                        </button>
+                    </div>
+                </td>
+            `;
+        }
+        
+        // Update stats
+        function updateStats() {
+            // Update active servers
+            const serversTable = document.getElementById('serversTable');
+            if (serversTable) {
+                document.getElementById('activeServers').textContent = serversTable.rows.length;
+            }
+            
+            // Update total orders
+            const ordersTable = document.getElementById('ordersTable');
+            if (ordersTable) {
+                document.getElementById('totalOrders').textContent = ordersTable.rows.length;
+                
+                // Calculate total spent
+                let totalSpent = 0;
+                const rows = ordersTable.rows;
+                
+                for (let i = 0; i < rows.length; i++) {
+                    const row = rows[i];
+                    const amountText = row.cells[3].textContent;
+                    const amount = parseFloat(amountText.replace('$', ''));
+                    
+                    if (!isNaN(amount)) {
+                        totalSpent += amount;
+                    }
+                }
+                
+                document.getElementById('totalSpent').textContent = '$' + totalSpent.toFixed(2);
+            }
+        }
+    </script>
+</body>
+</html>
